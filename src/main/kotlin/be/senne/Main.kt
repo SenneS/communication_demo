@@ -37,6 +37,8 @@ fun askYesNoQuestion(msg : String) : Boolean {
     }
 }
 
+//note: hoe stop ik iemand die de public keys van server/client kan onderscheppen en vervangen met een andere sleutel?
+//signing werkt niet als ze de sleutels uit mijn applicatie kunnen halen.. acceptabel risico <-> public key met qr code doorgeven?
 fun main(args: Array<String>) {
     println("### Communication Demo ###")
 
@@ -46,8 +48,8 @@ fun main(args: Array<String>) {
     val hosting = askYesNoQuestion("Do you want to Host a sessions?")
 
     var clientSocket : Socket
-    var dataInputStream : DataInputStream
-    var dataOutputStream : DataOutputStream
+    val dataInputStream : DataInputStream
+    val dataOutputStream : DataOutputStream
 
     val ecParameter = ECGenParameterSpec("P-521")
     val keygen = KeyPairGenerator.getInstance("ECDH", "BC");
@@ -114,16 +116,15 @@ fun main(args: Array<String>) {
                 msg = ByteArray(msgLength)
                 dataInputStream.read(msg, 0, msgLength)
             }
-            var decryptedMsg = cbcDecrypt(msg, aesKey, aesIv)
+            val decryptedMsg = cbcDecrypt(msg, aesKey, aesIv)
             writeToConsole("Them: ${decryptedMsg.decodeToString()}")
         }
     }
 
     while (true) {
-        val msg = readLine()
-        if(msg == null) { continue }
+        val msg = readLine() ?: continue
         val msgBytes = msg.encodeToByteArray()
-        var encryptedMsg = cbcEncrypt(msgBytes, aesKey, aesIv)
+        val encryptedMsg = cbcEncrypt(msgBytes, aesKey, aesIv)
         val length = encryptedMsg.size
 
         writeToConsole("Me: ${msg}")
