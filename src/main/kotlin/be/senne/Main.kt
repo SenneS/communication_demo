@@ -147,16 +147,21 @@ fun cbcEncrypt(input: ByteArray, key: ByteArray, iv: ByteArray) : ByteArray {
 }
 
 fun cbcDecrypt(input: ByteArray, key: ByteArray, iv: ByteArray) : ByteArray {
+    println("Trying to decrypt ${input.size} bytes")
     val cipher = Cipher.getInstance("AES/CBC/ZeroBytePadding", "BC");
     cipher.init(Cipher.DECRYPT_MODE, createKey(key), createIv(iv))
     return cipher.doFinal(input)
 }
 
 @Synchronized
-private fun writeToConsole(msg : String) {
+fun writeToConsole(msg : String) {
     println("${LocalTime.now()}: ${msg}")
 }
 
-private fun bytes2hex(bytes : ByteArray) : String {
+fun bytes2hex(bytes : ByteArray) : String {
     return bytes.joinToString { byte -> byte.toUByte().toString(16) }
+}
+
+fun hex2bytes(str : String) : ByteArray {
+    return str.chunked(2).map { byte -> byte.toUByte(16).toByte() }.toByteArray()
 }
